@@ -19,9 +19,16 @@ raw_data_paths = os.getenv('RAW_DATA_PATH')
 
 # Function to get additional features for some tickers
 
-def get_additional_features(ticker, start = '2005-01-01', end = '2025-11-21', frequency = '1d'):
+def get_additional_features(ticker, 
+                            start = '2005-01-01', 
+                            end = '2025-11-21', 
+                            frequency = '1d'):
 
-    data = yf.download(tickers = ticker, start = start, end = end, interval = frequency, auto_adjust = True)
+    data = yf.download(tickers = ticker, 
+                       start = start, 
+                       end = end, 
+                       interval = frequency, 
+                       auto_adjust = True)
 
     return data
 
@@ -38,12 +45,12 @@ def get_additional_features(ticker, start = '2005-01-01', end = '2025-11-21', fr
 # - iShares Russell 2000 ETF (IWM)
 # - US Dollar Index (DX-Y-NYB)
 
-additional_ticker = ['^VIX', 'GC=F', 'CL=F', 'TLT', 'RSP', 'IWM', 'DX-Y.NYB']
+additional_tickers = ['^VIX', 'GC=F', 'CL=F', 'TLT', 'RSP', 'IWM', 'DX-Y.NYB']
 
 
 # Get and save the additional features except TNX 
 
-for ticker in additional_ticker:
+for ticker in additional_tickers:
 
     data = get_additional_features(ticker)
 

@@ -24,7 +24,11 @@ start = '2005-01-01'
 end = '2025-11-21'
 frecuency = '1d'
 
-spy_data = yf.download(tickers = ticker, start = start, end = end, interval = frecuency, auto_adjust = True)
+spy_data = yf.download(tickers = ticker, 
+                       start = start, 
+                       end = end, 
+                       interval = frecuency, 
+                       auto_adjust = True)
 
 
 # Save the data to a CSV file 
