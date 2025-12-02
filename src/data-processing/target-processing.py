@@ -44,6 +44,6 @@ spy['Date'] = pd.to_datetime(spy['Date'])
 spy = spy.set_index('Date')
 spy = spy.apply(pd.to_numeric, errors = 'coerce')
 
-print(spy.info())
+
 
 
