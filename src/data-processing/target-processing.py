@@ -55,7 +55,7 @@ spy_daily_returns = spy2[['SPY_Returns']].copy()
 
 # Save the processed data
 
-data_processed_path = os.join(processed_data_path, 'spy_daily_returns.csv')
+data_processed_path = os.path.join(processed_data_path, 'spy_daily_returns.csv')
 spy_daily_returns.to_csv(data_processed_path)
 
 # ------------------------- SPY Log-Returns -------------------------
@@ -68,10 +68,5 @@ spy_daily_log_returns = spy2[['SPY_Log_Returns']].copy()
 
 # Save the processed data
 
-data_processed_path = os.join(processed_data_path, 'spy_daily_log_returns.csv')
+data_processed_path = os.path.join(processed_data_path, 'spy_daily_log_returns.csv')
 spy_daily_returns.to_csv(data_processed_path)
-
-
-
-# RECORDAR:   PARA PODER PONER LA DATA LISTA PARA LOS MODELOS --> MIRAR SI HAY QUE 
-# NORMALIZAR, IMPUTAR, QUITRA LA PRIMERA FILA --> QUE ESTE LISTA LA DATA
