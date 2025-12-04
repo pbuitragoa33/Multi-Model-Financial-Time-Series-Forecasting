@@ -1,0 +1,69 @@
+# Parameters used for Indicators 
+
+indicators:
+  scaled_sma:
+    # Period for the short-term Simple Moving Average (Close - SMA)
+    period_sma: 50
+    # Period for the long-term Simple Moving Average (Close - SMA)
+    period_sma2: 200
+
+  scaled_ema:
+    # Period for the short-term Exponential Moving Average (Close - EMA)
+    period_ema: 50
+    # Period for the long-term Exponential Moving Average (Close - EMA)
+    period_ema2: 200
+
+  scaled_hma:
+    # Period for the short-term Hull Moving Average (Close - HMA)
+    period_hma: 50
+    # Period for the long-term Hull Moving Average (Close - HMA)
+    period_hma2: 200
+
+  momentum:
+    # Momentum calculated as: Close - Close.shift(period)
+    short_momentum_period: 20
+    long_momentum_period: 100
+
+  rsi:
+    # Lookback period for the Relative Strength Index
+    period_rsi: 14
+
+  stochastic:
+    # Lookback period for Stochastic Oscillator (%K and %D)
+    period_stochastic: 14
+    # Smoothing length for %K line
+    smooth_k: 1
+    # Smoothing length for %D line (moving average of smoothed %K)
+    smooth_d: 3
+
+  williams_r:
+    # Lookback period for Williams %R indicator
+    period_williamsR: 21
+
+  normalized_atr:
+    # Lookback period for ATR calculation (ATR / Close)
+    period_atr: 14
+
+  scaled_bollinger:
+    # Period for Bollinger Bands SMA and standard deviation
+    period_bb: 21
+    # Number of standard deviations for upper/lower bands
+    num_std: 2
+
+  scaled_keltner:
+    # Period for the EMA used in Keltner Channels
+    period_keltner: 21
+    # ATR multiplier for upper/lower Keltner levels
+    atr_multiplier: 2
+
+  obv:
+    # On-Balance Volume indicator (no configurable parameters)
+    enabled: true
+
+  anchored_vwap:
+    # Row index from which VWAP begins accumulating values
+    anchor_index: 0
+
+  intraday_log_volatility:
+    # Intraday Logarithmic Volatility (log(High / Low))
+    enabled: true
