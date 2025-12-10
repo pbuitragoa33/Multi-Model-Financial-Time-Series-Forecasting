@@ -1,6 +1,12 @@
-#    Descriotppn
+# Details of  consolidation script:
 
-
+# Load the 3 main dataframes (SPY_Close, Features from FRED and Technical Indicators).
+# The script merge them into a single dataframe and get unified as a time series.
+# Impute the missing values --> Eliminating the first 222 rows and applying the ffill() method.
+# Split the dataframe in 3 subsets (train set, validation set and test set) --> Used for time series.
+# Scale via Robust Scaler to standardize the data (mostly for deep learning methods).
+# Save the 3 resulting dataframes in csv format into src/data/prepared
+# Save the SPY close price in csv format into src/data/prepared
 
 
 
@@ -35,6 +41,7 @@ out_object_path = Path(out_object_path)
 
 
 def load_merge_impute():
+
 
     print("Loading datasets...")
 
@@ -88,8 +95,8 @@ def load_merge_impute():
     # Merging process
 
     df_final = (
-        complete_features
-        .join(spy_close, how = "left")
+        spy_close
+        .join(complete_features, how = "left")
         .join(complete_technicals, how = "left")
     )
 
@@ -124,10 +131,10 @@ def scale_split(df, target_column = 'Close_SPY'):
 
     df = df.sort_index()
 
-    # Define cuts (70% for train, 20% for validation, 10% for evaluation)
+    # Define cuts (80% for train, 10% for validation, 10% for evaluation)
 
     n = len(df)
-    train_end = int(n * 0.7)
+    train_end = int(n * 0.8)
     validation_end = int(n * 0.9)
 
     train = df.iloc[:train_end]
@@ -142,14 +149,17 @@ def scale_split(df, target_column = 'Close_SPY'):
 
 
     # Scaling with Robust Scaler (handles better outliers and spikes) --> Median / IQR
+    # Fit only in train subset
 
     features_to_scale = [c for c in df.columns if c != target_column]
 
-    scaler = RobustScaler()
+    scaler_features = RobustScaler()
+    scaler_features.fit(train[features_to_scale])
 
-    # Fit only in train subset
+    # Scaler for target
 
-    scaler.fit(train[features_to_scale])
+    scaler_target = RobustScaler()
+    scaler_target.fit(train[[target_column]])
 
     # Transform in all subsets
 
@@ -157,13 +167,56 @@ def scale_split(df, target_column = 'Close_SPY'):
     val_scaled = validation.copy()
     test_scaled = testing.copy()
 
-    train_scaled[features_to_scale] = scaler.transform(train[features_to_scale])
-    val_scaled[features_to_scale] = scaler.transform(validation[features_to_scale])
-    test_scaled[features_to_scale] = scaler.transform(testing[features_to_scale])
+    train_scaled[features_to_scale] = scaler_features.transform(train[features_to_scale])
+    val_scaled[features_to_scale] = scaler_features.transform(validation[features_to_scale])
+    test_scaled[features_to_scale] = scaler_features.transform(testing[features_to_scale])
 
-    print("Subsets scaled")
+    train_scaled[target_column] = scaler_target.transform(train[[target_column]]).flatten()
+    val_scaled[target_column]   = scaler_target.transform(validation[[target_column]]).flatten()
+    test_scaled[target_column]  = scaler_target.transform(testing[[target_column]]).flatten()
 
-    # Save with joblib
+    print("Subsets scaled (Features & Target)")
+
+    # Save the scalers with joblib
+
+    scaler_features_path = os.path.join(out_object_path, 'features_robust_scaler.joblib')
+    joblib.dump(scaler_features, scaler_features_path)
+
+    scaler_target_path = os.path.join(out_object_path, 'target_robust_scaler.joblib')
+    joblib.dump(scaler_target, scaler_target_path)
+
+    print("Scalers saved")
+
+    return train_scaled, val_scaled, test_scaled
+
+
+# Function to save datasets (train, validation and test)
+
+def save_datasets(train, validation, test):
+
+    train.to_csv(prepared_data_path / 'train_dataset.csv')
+    validation.to_csv(prepared_data_path / 'validation_dataset.csv')
+    test.to_csv(prepared_data_path / 'test_dataset.csv')
+
+    print("Saved files")
 
 
 
+
+# Main 
+
+if __name__ == '__main__':
+
+    # Load, merge and impute
+
+    master_df = load_merge_impute()
+
+    # Split and scale
+
+    train_df, validation_df, test_df = scale_split(master_df, target_column = 'Close_SPY')
+
+    # Save datasets
+
+    save_datasets(train_df, validation_df, test_df)
+
+    print("Successful Consolidation")
