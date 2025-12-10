@@ -1,0 +1,45 @@
+# Feature Relevance Analysis - Configuration File
+
+paths:
+  # Path to the folder containing the prepared training dataset
+  prepared_data_path: "./data/prepared/"
+  
+  # Path where all results, plots, and rankings will be saved
+  output_path: "./output/features/"
+
+data:
+  # Training dataset filename inside prepared_data_path
+  train_dataset_filename: "train_dataset.csv"
+  
+  # Main price/asset column used for forward return target generation
+  target_column: "Close_SPY"
+  
+  # Number of days for forward return horizon
+  forward_return_horizon: 10
+
+random_forest:
+  n_estimators: 100
+  max_depth: 8
+  random_state: 42
+  n_jobs: -1
+
+permutation_importance:
+  n_repeats: 10
+  random_state: 42
+  n_jobs: -1
+
+mutual_information:
+  random_state: 42
+  discrete_features: false
+
+plots:
+  top_features_barplot: 25   # Number of features displayed in the bar chart
+  top_features_correlation: 15  # Number of features in the correlation matrix
+
+output_files:
+  ranking_csv: "feature_ranking_consensus.csv"
+  importance_plot: "feature_importance_comparison.png"
+  correlation_plot: "top15_features_correlation.png"
+
+logging:
+  verbose: true
