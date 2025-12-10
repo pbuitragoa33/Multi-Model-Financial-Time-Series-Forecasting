@@ -90,7 +90,7 @@ data_fin.info()
 
 def load_csv_FRED(path, column):
 
-    df = pd.read_csv(path, parse_dates=['Date'], index_col = 'Date')
+    df = pd.read_csv(path, parse_dates = ['Date'], index_col = 'Date')
 
     return df[[column]]
 
