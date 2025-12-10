@@ -1,0 +1,82 @@
+consolidation_pipeline:
+  description: >
+    Pipeline to consolidate three datasets (SPY Close, FRED macro features, and technical indicators),
+    impute missing values, split the data into temporal subsets, and scale features using RobustScaler.
+    Both the feature matrix and the target (Close_SPY) are scaled with independent RobustScaler objects.
+    Final datasets and scalers are saved for downstream modeling.
+
+  steps:
+
+    load_and_merge:
+      description: >
+        Load the three main data sources, clean column formats, convert Date to datetime index,
+        unify naming conventions, and merge everything into a single time-series dataframe ordered by date.
+      inputs:
+        - RAW_DATA_PATH/SPY_raw_data.csv
+        - PROCESSED_DATA_PATH/features_processed_data.csv
+        - PROCESSED_DATA_PATH/technical_indicators_processed_data.csv
+      operations:
+        - rename_first_column_to_Date
+        - convert_Date_to_datetime
+        - set_Date_as_index
+        - cast_numeric_with_coerce
+        - join_features_and_technicals_with_Close_SPY
+        - sort_by_date
+      outputs:
+        - merged_timeseries_dataframe
+
+    imputation:
+      description: >
+        Structural cleanup and missing-value handling:
+        remove the first 222 rows (corresponding to indicators requiring long lookback windows),
+        then use forward-fill to impute all remaining missing entries.
+      operations:
+        - drop_first_222_rows
+        - forward_fill_missing_values
+      outputs:
+        - imputed_dataframe
+
+    split_datasets:
+      description: >
+        Perform chronological splitting of the dataset into training, validation,
+        and testing subsets without shuffling, preserving the time-series structure.
+      split_ratios:
+        train: 0.80
+        validation: 0.10
+        test: 0.10
+      outputs:
+        - train_df
+        - validation_df
+        - test_df
+
+    scaling:
+      description: >
+        Apply RobustScaler (median/IQR scaling), which is more resilient to outliers
+        common in financial time series. Two separate scalers are used:
+        one for the feature set and a second one for the target variable Close_SPY.
+        Both scalers are fitted only on the training subset to avoid data leakage.
+      scalers:
+        features_scaler: RobustScaler
+        target_scaler: RobustScaler
+      fit_on: train_df
+      transform: [train_df, validation_df, test_df]
+      save_paths:
+        features_scaler: OUT_OBJECTS_PATH/features_robust_scaler.joblib
+        target_scaler: OUT_OBJECTS_PATH/target_robust_scaler.joblib
+      outputs:
+        - train_scaled
+        - validation_scaled
+        - test_scaled
+
+    save_outputs:
+      description: >
+        Save the scaled datasets (train, validation, and test) in CSV format
+        to the PREPARED_DATA_PATH directory for downstream modeling
+        (e.g., LSTM, GRU, TFT, SARIMAX, etc.).
+      outputs:
+        - PREPARED_DATA_PATH/train_dataset.csv
+        - PREPARED_DATA_PATH/validation_dataset.csv
+        - PREPARED_DATA_PATH/test_dataset.csv
+
+  final_output:
+    message: "Successful Consolidation"
