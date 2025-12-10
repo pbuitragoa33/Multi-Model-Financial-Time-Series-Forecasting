@@ -44,6 +44,11 @@ spy['Date'] = pd.to_datetime(spy['Date'])
 spy = spy.set_index('Date')
 spy = spy.apply(pd.to_numeric, errors = 'coerce')
 
+spy_close = spy['Close']
+
+data_processed_path = os.path.join(processed_data_path, 'spy_daily_close.csv')
+spy_close.to_csv(data_processed_path)
+
 
 # ------------------------- SPY Returns -------------------------
 
