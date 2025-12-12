@@ -79,7 +79,7 @@ def search_best_q(train, val, q_min = 1, q_max = 30):
         model = ARIMA(train, order = (0, 1, q)).fit()
 
         model_val = model.apply(history_train_val)
-        preds_val = model_val.fittedvalues[val.index[0]:]
+        preds_val = model.forecast(steps = len(val))
 
         mse = mean_squared_error(val, preds_val)
         mse_results[q] = mse

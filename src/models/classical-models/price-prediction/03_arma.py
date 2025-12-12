@@ -67,7 +67,7 @@ def load_data():
     test  = test_df[TARGET].asfreq("B").ffill()
 
     train = train.bfill()
-    val = val.ffill()
+    val = val.bfill()
     test = test.bfill()
 
     return train, val, test, scaler_target
@@ -95,7 +95,7 @@ def search_best_pq(train, val, p_max = 5, q_max = 5):
                 model = ARIMA(train, order = (p, 0, q)).fit()
 
                 model_val = model.apply(history_train_val)
-                preds_val = model_val.fittedvalues[val.index[0]:]
+                preds_val = model.forecast(steps = len(val))
 
                 mse = mean_squared_error(val, preds_val)
                 mse_results[(p, q)] = mse
