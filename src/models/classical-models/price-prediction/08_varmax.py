@@ -19,13 +19,6 @@ import joblib
 from pathlib import Path
 from statsmodels.tsa.statespace.varmax import VARMAX
 from sklearn.metrics import mean_squared_error
-import warnings
-
-
-# Suppress convergence warnings for cleaner output during grid search
-
-warnings.filterwarnings("ignore")
-
 
 
 # --- Paths configuration ---
@@ -37,15 +30,13 @@ target_scaler_path = os.getenv('OUT_OBJECTS_PATH')
 
 out_diverse_path = os.getenv('OUT_DIVERSE_PATH')
 out_model_path = os.getenv('OUT_MODEL_PATH_CLASSIC')
-
-eval_pred_varmax_path = Path(os.getenv('OUT_EVAL_PRED_08_VARMAX')).parent / "08_eval_pred_VARMAX"
-eval_pred_varmax_path.mkdir(parents = True, exist_ok = True)
+eval_pred_varmax_path = os.getenv('OUT_EVAL_PRED_08_VARMAX')  
 
 prepared_data_path = Path(prepared_data_path)
 target_scaler_path = Path(target_scaler_path)
 out_diverse_path = Path(out_diverse_path)
 out_model_path = Path(out_model_path)
-
+eval_pred_varmax_path = Path(eval_pred_varmax_path)
 
 
 # ----------------------
@@ -78,78 +69,17 @@ def load_data():
 
 # 2. Select optimal (p, q) order using AIC (Grid Search)
 
-def select_best_order(train, val, max_p = 1, max_q = 1):
-
-    print("\nSelecting optimal VARMAX(p, q) order...")
-    print(f"Grid Search Space -> p: 0 to {max_p}, q: 0 to {max_q}")
-
-    # Combine for selection
-
-    data = pd.concat([train, val])
-    
-    best_aic = float('inf')
-    best_order = (1, 0)
-    
-    results_list = []
-
-    # Loop of combiantions
-
-    for p in range(max_p + 1):
-
-        for q in range(max_q + 1):
-
-            if p == 0 and q == 0:
-
-                continue
-            
-            try:
-
-                model = VARMAX(data, order = (p, q), trend = 'c', enforce_stationarity = False, enforce_invertibility = False)
-                res = model.fit(disp = False, maxiter = 200)
-                
-                print(f"Tested VARMAX({p},{q}) -> AIC: {res.aic:.2f}")
-                
-                results_list.append({'p': p, 'q': q, 'AIC': res.aic})
-                
-                if res.aic < best_aic:
-
-                    best_aic = res.aic
-                    best_order = (p, q)
-                    
-            except Exception as e:
-
-                print(f"Failed VARMAX({p},{q}): {e}")
-
-                continue
-
-    print(f"\nBest Order Found (AIC): {best_order} with AIC: {best_aic:.2f}\n")
-
-    # Plot AIC Heatmap
-
-    if results_list:
-
-        df_res = pd.DataFrame(results_list)
-        pivot_table = df_res.pivot(index = 'p', columns = 'q', values = 'AIC')
-        
-        plt.figure(figsize = (16, 14))
-
-        sns.heatmap(pivot_table, annot = True, fmt = ".1f", cmap = "viridis_r")
-        plt.title(f"VARMAX AIC Grid Search\nBest: {best_order}")
-        plt.tight_layout()
-        plt.savefig(out_diverse_path / "08_varmax_aic_heatmap.png")
-        plt.close()
-
-    return best_order
+# No hyperparameter tuning, it's very complex and long
 
 
 # 3. Train final VARMAX model
 
-def train_model(train, best_order):
+def train_model(train, order: tuple):
 
-    print(f"Training final VARMAX{best_order} on training set...")
+    print(f"Training final VARMAX{order} on training set...")
     
-    model = VARMAX(train, order = best_order, trend = 'c', enforce_stationarity = False, enforce_invertibility = False)
-    model_fitted = model.fit(disp = False, maxiter = 1000)
+    model = VARMAX(train, order = (1, 1), trend = 'c', enforce_stationarity = False, enforce_invertibility = False)
+    model_fitted = model.fit(disp = False, method = 'nm', maxiter = 1)
     
     joblib.dump(model_fitted, out_model_path / '08_varmax_model.joblib')
     
@@ -177,7 +107,7 @@ def evaluate_test(model_fitted, test, scaler_target):
 
     # Plot
 
-    plt.figure(figsize = (18, 12))
+    plt.figure(figsize = (18, 16))
 
     plt.plot(test.index, real_eval, label = "Real (Test)", color = "black", alpha = 0.7)
     plt.plot(test.index, preds_eval, label = "Prediction VARMAX", color = "purple", linestyle = "--")
@@ -203,7 +133,7 @@ def future_prediction(model_fitted, test, scaler_target, horizon = 30):
     future_preds_df = full_preds.iloc[-horizon:].copy()
     
     last_date = test.index[-1]
-    future_dates = pd.bdate_range(start=last_date + pd.Timedelta(days = 1), periods = horizon)
+    future_dates = pd.bdate_range(start = last_date + pd.Timedelta(days = 1), periods = horizon)
     future_preds_df.index = future_dates
     
     preds_future_val = scaler_target.inverse_transform(future_preds_df[TARGET].values.reshape(-1, 1)).flatten()
@@ -244,13 +174,9 @@ if __name__ == '__main__':
 
     train, val, test, scaler_target = load_data()
 
-    # 2. Select best order 
-
-    best_order = select_best_order(train, val, max_p = 1, max_q = 1)
-
     # 3. Train model
 
-    model_fitted = train_model(train, best_order)
+    model_fitted = train_model(train, order = (1, 1))
 
     # 4. Test evaluation
 
