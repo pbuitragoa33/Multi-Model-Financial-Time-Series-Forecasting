@@ -1,0 +1,32 @@
+# Classical Model Best Params Fit
+
+models:
+  # Models without specific order parameters provided
+  non_parameterized_models:
+    - AR
+    - MA
+    - ARMA
+    - VAR
+    - VARMAX
+
+  # Models with specific optimal orders
+  parameterized_models:
+    arima:
+      order_p_d_q: [4, 0, 3]
+    
+    sarima:
+      order_p_d_q: [2, 0, 3]
+      seasonal_order_P_D_Q_s: [1, 1, 2, 5]
+
+    sarimax:
+      description: "Top 3 candidate models based on fit criteria"
+      best_fits:
+        - model_1:
+            order: [1, 0, 1]
+            seasonal_order: [0, 1, 0, 5]
+        - model_2:
+            order: [1, 1, 1]
+            seasonal_order: [1, 1, 1, 5]
+        - model_3:
+            order: [1, 1, 0]
+            seasonal_order: [1, 0, 0, 5]
