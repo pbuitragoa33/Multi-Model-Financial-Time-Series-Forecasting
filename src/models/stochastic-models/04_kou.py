@@ -399,7 +399,7 @@ if __name__ == "__main__":
 
     train_lgreturns, test_lgreturns = data_preparation_lgreturns() 
 
-    # 2. Parameter Estimations and KS Test according to log returns data
+    # 2. Parameter Estimations and KS Test according to log returns data (from GBM)
 
     mu, sigma = params_calibration(train_lgreturns)
 
