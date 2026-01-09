@@ -1,0 +1,38 @@
+# Stochastic Model Parameters
+
+models:
+  geometric_brownian_motion:
+    description: "Geometric Brownian Motion (GBM)"
+    parameters:
+      drift_mu: 0.000442
+      volatility_sigma: 0.012118
+
+  merton_jump_diffusion:
+    description: "Merton Jump Diffusion Model"
+    parameters:
+      drift_mu: 0.000442
+      volatility_sigma: 0.012118
+      jump_parameters:
+        intensity_lambda: 0.016721
+        mu_j: -0.005497
+        sigma_j: 0.057137
+
+  heston_volatility:
+    description: "Heston Stochastic Volatility Model"
+    parameters:
+      drift_mu: 0.000442
+      kappa: 1.5000     
+      theta: 0.000147       
+      xi_sigma_v: 0.000600   
+      rho: -0.1120           
+
+  kou_jump_diffusion:
+    description: "Kou Double Exponential Jump Diffusion Model"
+    parameters:
+      drift_mu: 0.000442
+      volatility_sigma: 0.012118
+      jump_parameters:
+        intensity_lambda: 0.016517
+        p_prob_positive: 0.800
+        eta1_pos_rate: 18.187
+        eta2_neg_rate: 18.798
