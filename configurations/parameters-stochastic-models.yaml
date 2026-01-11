@@ -36,3 +36,11 @@ models:
         p_prob_positive: 0.800
         eta1_pos_rate: 18.187
         eta2_neg_rate: 18.798
+
+  NIG:
+    description: "Normal Inverse Gaussian Model"
+    parameters:
+      alpha: 0.3108
+      beta: -0.0348    
+      scale: 0.006612      
+      location: 0.001187 
