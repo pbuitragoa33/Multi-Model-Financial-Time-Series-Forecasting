@@ -74,6 +74,7 @@ def load_merge_impute():
     complete_features = complete_features.copy()
 
     if 'Date' in complete_features.columns:
+
         complete_features['Date'] = pd.to_datetime(complete_features['Date'])
         complete_features = complete_features.set_index('Date')
 
@@ -85,6 +86,7 @@ def load_merge_impute():
     complete_technicals = complete_technicals.copy()
 
     if 'Date' in complete_technicals.columns:
+        
         complete_technicals['Date'] = pd.to_datetime(complete_technicals['Date'])
         complete_technicals = complete_technicals.set_index('Date')
 
