@@ -491,7 +491,7 @@ if __name__ == '__main__':
     # Correction: We need the last seq_length raw data points from X_test
 
     last_raw_seq = X_test[-seq_length:] # (60, features)
-    last_seq_tensor = torch.tensor(last_raw_seq, dtype=torch.float32).unsqueeze(0).to(DEVICE)
+    last_seq_tensor = torch.tensor(last_raw_seq, dtype = torch.float32).unsqueeze(0).to(DEVICE)
 
     with torch.no_grad():
 
