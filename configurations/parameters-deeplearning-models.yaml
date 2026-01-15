@@ -1,0 +1,118 @@
+# Deep Learning Models Configuration Parameters
+
+global:
+  device: cpu
+  loss_function: mse
+  metrics:
+    - rmse
+    - mae
+    - r2
+
+data:
+  seq_length: 60
+  horizon: 30
+  batch_size: 32
+  shuffle: false
+
+training:
+  gradient_clipping:
+    enabled: true
+    max_norm: 1.0
+
+  early_stopping:
+    monitor: val_loss
+    min_delta: 0.0
+
+  scheduler:
+    enabled: false
+    factor: 0.5
+    patience: 700
+    min_lr: 1e-7
+
+
+models:
+
+  RNN:
+    architecture:
+      hidden_size: 128
+      num_layers: 2
+      dropout: 0.2
+
+    optimizer:
+      name: adam
+      learning_rate: 1.0e-6
+      weight_decay: 1.0e-3
+
+    training:
+      epochs: 1000
+      patience: 700
+
+
+  GRU:
+    architecture:
+      hidden_size: 128
+      num_layers: 2
+      dropout: 0.2
+
+    optimizer:
+      name: adam
+      learning_rate: 1.0e-6
+      weight_decay: 1.0e-3
+
+    training:
+      epochs: 1000
+      patience: 700
+
+
+
+  LSTM:
+    architecture:
+      hidden_size: 128
+      num_layers: 2
+      dropout: 0.2
+
+    optimizer:
+      name: adam
+      learning_rate: 1.0e-6
+      weight_decay: 1.0e-3
+
+    training:
+      epochs: 2000
+      patience: 1500
+
+
+
+  TFT:
+    architecture:
+      encoder:
+        hidden_size: 64
+        num_layers: 2
+        dropout: 0.2
+
+      attention:
+        num_heads: 8
+        dropout: 0.2
+
+      gating:
+        enabled: true
+
+      context_embedding:
+        enabled: true
+        embedding_dim: 16
+
+    optimizer:
+      name: adam
+      learning_rate: 1.0e-5
+      weight_decay: 1.0e-4
+
+    training:
+      epochs: 2500
+      patience: 1000
+
+    regularization:
+      dropout: 0.2
+      layer_norm: true
+
+    initialization:
+      weight_init: xavier_uniform
+      bias_init: zeros
