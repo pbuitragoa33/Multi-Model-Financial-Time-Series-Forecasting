@@ -1,0 +1,19 @@
+Model,Category,RMSE,MAE,R2
+AR,Classical ,"234.40",,
+MA,Classical ,"5.84",,
+ARMA,Classical ,"5.50",,
+ARIMA,Classical ,"5.50",,
+SARIMA,Classical ,"5.65",,
+SARIMAX,Classical ,"3.59",,
+SARIMAX 2,Classical ,"0.09",,
+VAR,Classical ,"552.90",,
+VARMAX,Classical ,,,
+GBM,Stochastic,"93.36","86.11",
+MERTON,Stochastic,"93.86","86.47",
+HESTON,Stochastic,"92.21","84.96",
+KOU,Stochastic,"92.34","82.07",
+NIG,Stochastic,"82.49","75.24",
+RNN,Deep Learning,"170.15","164.01","-11.4"
+GRU,Deep Learning,"190.89","185.19","-14.6"
+LSTM,Deep Learning,"183.11","177.72","-13.3"
+TFT,Deep Learning,"178.22","173.93","-12.6"
