@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project implements a comprehensive multi-model approach to financial time series forecasting, focusing on predicting the price movements and volatility of the SPY ETF (SPDR S&P 500 ETF Trust), which tracks the S&P 500 index. The system integrates classical statistical models, deep learning architectures, and stochastic processes to provide robust and multiple predictions for financial time series data.
+This project implements a comprehensive multi-model approach to financial time series forecasting, focusing on predicting the price movements and volatility of the SPY ETF (SPDR S&P 500 ETF Trust), which tracks the S&P 500 index. The system integrates classical statistical models, deep learning architectures, and stochastic processes to provide robust and multiple predictions for financial time series data and compare them.
 
 ![Project Guide and Summary](outputs/results/forefront.png)
 
@@ -132,6 +132,30 @@ The following table group the results of each method with the test subset, in or
 ![Model Results Comparison](outputs/results/results_comparison.png)
 
 
+You can see the 30 days predictions of all models after the test set end date with the real trajectory of the SPY Close price. The results in below:
+
+**Classical Models**
+
+![Classical Models Comparison](outputs/results/classical_models.png)
+
+**Stochastic Models**
+
+![Stochastic Models Comparison](outputs/results/stochastic_models.png)
+
+**Deep Learning Models**
+
+![Deep Learning Models Comparison](outputs/results/deep_learning_models.png)
+
 ## Conclusions
 
-***
+- The stochastic models were the most effective to predict the volatility in order to get the SPY Close price. Monte Carlo simulations generate thousands of possible trajectories, and using the mean reduces variance and bias. This is robust against uncertainty.
+
+- The networks or deep learning models get the worst performance. This is quite concerning, maybe the architecture of them was not enough to catch the complexity of markets. The hyperparameter optimization could push higher the performance. Low R² in deep learning indicates overfitting or insufficient data.
+
+- There is no magic trick. The market is very difficult to predict because of the random noise, the no-seasonality and the rapid regime changes. Systematic comparison confirms that there is no single optimal model; stochastic models excel in volatile environments, while classical models are simpler and faster. Deep learning models require more fine-tuning (data, architecture) for financial series.
+
+- The features importance ranking shows that the macroeconomic data stay above the technical indicators. The National Financial Condition Index is the most relevant feature, followed by Open proce and High price and the RSP (market breath indicator).
+
+- Financial markets are not stationary (they change over time due to economic events). Complex models assume stability in patterns, which fails in dynamic environments. Stochastic models (based on stochastic differential equations) explicitly model uncertainty and changing volatility, and their simulation averages multiple future scenarios, reducing the impact of singularities.
+
+- Looking at the mean or median of these simulations helps with investment decisions by summarizing probabilistic expectations. The arithmetic average of all simulated prices at the end of the time horizon represents the expected future price, assuming the market tends toward balance. If the mean is above the current price, it suggests an expected upward trend (a potential reason to buy or keep long positions).
